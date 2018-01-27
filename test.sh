@@ -126,3 +126,9 @@ assert_pii_found $?
 test_case "from file: file not found"
 ./piifind.sh noexist
 assert_pii_found $?
+
+
+
+
+
+echo -e "\e[32mAll tests passed!\e[m"

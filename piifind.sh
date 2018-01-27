@@ -40,13 +40,12 @@ if [ ! -z "$extra_patterns" ]; then
     pii_patterns="${pii_patterns}|$extra_patterns"
 fi
 
-## This regex looks for a Clojure form that starts with one of $print_fns
-## followed by one of $pii_patterns. Because Clojure form can be multiple lines
-## we use [\s\S] that matches all characters including \n (* doesn't match \n).
-##
-## Examples that match
-#  (infof "debug: %s"
-#          address)
+# This regex looks for a Clojure form that starts with one of $print_fns
+# followed by one of $pii_patterns.
+# Examples that match
+# (infof "debug: %s"
+#        address)
+# https://regex101.com/r/lF0fI1/238
 regex="\((${print_fns})[^)]*(${pii_patterns})[^)]*\)"
 
 if [ ! -z "$1" ]; then
