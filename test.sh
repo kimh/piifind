@@ -41,7 +41,7 @@ test_case "no pii is logged"
 EOF
 assert_pii_not_found $?
 
-test_case "search from multiline"
+test_case "search from multiple lines"
 ./piifind.sh <<EOF
 (log "debug %s"
       address)
@@ -68,6 +68,15 @@ test_case "search commong logging functions: log/errorf"
 (log/errorf address)
 EOF
 assert_pii_found $?
+
+test_case "complex pattern"
+./piifind.sh <<EOF
+(log/infof "some unrelated debug")
+(defn my-func [foo]
+  (-> foo
+      (:email))
+EOF
+assert_pii_not_found $?
 
 #### Testing extra pattern
 test_case "specify optional pattern from option"

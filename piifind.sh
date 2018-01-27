@@ -47,7 +47,7 @@ fi
 ## Examples that match
 #  (infof "debug: %s"
 #          address)
-regex="\(($print_fns)[\s\S]*?(${pii_patterns})+.*\)"
+regex="\((${print_fns})[^)]*(${pii_patterns})[^)]*\)"
 
 if [ ! -z "$1" ]; then
     echo "Reading from file"
