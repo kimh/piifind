@@ -40,7 +40,7 @@ if [ ! -z "$extra_patterns" ]; then
     pii_patterns="${pii_patterns}|$extra_patterns"
 fi
 
-# This regex looks for a Clojure form that starts with one of $print_fns
+# Good enough regex that looks for a Clojure form that starts with one of $print_fns
 # followed by one of $pii_patterns.
 # Examples that match
 # (infof "debug: %s"
