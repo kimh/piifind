@@ -24,7 +24,7 @@ function test_case {
     echo -e "\e[33mTesting: $desc\e[m"
 }
 
-### Testing from STDIN
+### Basic functionality testing
 test_case "the simplest case that should be detected"
 ./piifind.sh <<EOF
 (log address)
@@ -77,6 +77,12 @@ test_case "complex pattern"
       (:email))
 EOF
 assert_pii_not_found $?
+
+test_case "case insensitive matches"
+./piifind.sh <<EOF
+(infof Address)
+EOF
+assert_pii_found $?
 
 #### Testing extra pattern
 test_case "specify optional pattern from option"

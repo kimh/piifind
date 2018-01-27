@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-default_pii_patterns="name|email|address"
+default_pii_patterns="name|email|address|zip-code"
 print_fns="log|info|warn|error|debug"
 pii_patterns=$default_pii_patterns
 
@@ -49,16 +49,16 @@ fi
 regex="\((${print_fns})[^)]*(${pii_patterns})[^)]*\)"
 
 if [ ! -z "$1" ]; then
-    echo "Reading from file"
+    echo "Reading from file: $1"
     if [ ! -e $1 ]; then
         echo "File not found: $1"
         exit 1
     fi
 
-    grep -r --include='*.clj' --include='*.cljs' -PHz --color=auto $regex $1
+    grep -r -i --include='*.clj' --include='*.cljs' -PHz --color=auto $regex $1
 else
     echo "Reading from stdin"
-    cat - | grep -PHz --color=auto $regex
+    cat - | grep -i -PHz --color=auto $regex
 fi
 
 # Grep returns 0 if matchs
