@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 default_pii_patterns="name|email|address|zip-code"
-print_fns="log|info|warn|error|debug"
 pii_patterns=$default_pii_patterns
 
 function usage_exit {
@@ -40,13 +39,23 @@ if [ ! -z "$extra_patterns" ]; then
     pii_patterns="${pii_patterns}|$extra_patterns"
 fi
 
-# Good enough regex that looks for a Clojure form that starts with one of $print_fns
+# Positive lookahead looking for a form that starts from
+# one of the common logging fns. There must be a better way
+# so that I don't need to repeaset \( but I couldn't figure out.
+log_fn_regex="\(log|\(info|\(warn|\(error|\(debug"
+
+# Good enough regex that looks for a Clojure form that starts with one of common log fns
 # followed by one of $pii_patterns.
 # Examples that match
 # (infof "debug: %s"
 #        address)
-# https://regex101.com/r/lF0fI1/238
-regex="\((${print_fns})[^)]*(${pii_patterns})[^)]*\)"
+# https://regex101.com/r/hWN5LB/1
+# We need to check regex1 (looking for forms starting from log fns)
+# and then check regex2 (looking for PII keywords inside strings matched with regex1)
+regex1="(?=${log_fn_regex})(\((?:[^()]+|(?1))+\))"
+regex2="\b${pii_patterns}\b"
+grep_opt1="--ignore-case --perl-regexp --with-filename --only-matching --null-data --color=auto"
+grep_opt2="--ignore-case --perl-regexp --text --color=auto"
 
 if [ ! -z "$1" ]; then
     echo "Reading from file: $1"
@@ -55,10 +64,10 @@ if [ ! -z "$1" ]; then
         exit 1
     fi
 
-    grep -r -i --include='*.clj' --include='*.cljs' -PHz --color=auto $regex $1
+    find $1 \( -name \*.clj -or -name \*.cljs \) | xargs grep $grep_opt1 $regex1 | grep $grep_opt2 $regex2
 else
     echo "Reading from stdin"
-    cat - | grep -i -PHz --color=auto $regex
+    cat - | grep $grep_opt1 $regex1 | grep $grep_opt2 $regex2
 fi
 
 # Grep returns 0 if matchs

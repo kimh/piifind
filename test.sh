@@ -48,6 +48,15 @@ test_case "search from multiple lines"
 EOF
 assert_pii_found $?
 
+test_case "search from multiple lines that contains forms in the middle"
+./piifind.sh <<EOF
+(log "debug %s"
+      (some "foo")
+      (other "bar")
+      address)
+EOF
+assert_pii_found $?
+
 test_case "mix of pii and non-pii"
 ./piifind.sh <<EOF
 (def pii-func [pii]
