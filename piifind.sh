@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-default_pii_patterns="name|email|address|zip-code"
+default_pii_patterns="email|address|zip-code|phone"
 pii_patterns=$default_pii_patterns
 
 function usage_exit {
@@ -42,7 +42,7 @@ fi
 # Positive lookahead looking for a form that starts from
 # one of the common logging fns. There must be a better way
 # so that I don't need to repeaset \( but I couldn't figure out.
-log_fn_regex="\(log|\(info|\(warn|\(error|\(debug"
+log_fn_regex="\(log|\(info|\(warn|\(error|\(debug|\(prn|\(println"
 
 # Good enough regex that looks for a Clojure form that starts with one of common log fns
 # followed by one of $pii_patterns.
